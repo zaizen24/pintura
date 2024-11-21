@@ -9,4 +9,13 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'), // Alias '@' untuk folder 'src'
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000', // URL backend Express.js
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 });
