@@ -6,6 +6,7 @@ import ContactPage from '../pages/public/ContactPage';
 import PricingPage from '../pages/public/PricingPage';
 import LoginPage from '../pages/public/LoginPage';
 import RegisterPage from '../pages/public/RegisterPage';
+import ForgotPasswordPage from '../pages/public/ForgotPasswordPage';
 import DashboardPage from '../pages/private/DashboardPage';
 
 const AppRoutes = () => {
@@ -18,6 +19,7 @@ const AppRoutes = () => {
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
     </Router>

@@ -82,12 +82,63 @@ const LoginPage = () => {
                 />
               </div>
             </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  id="remember_me"
+                  name="remember_me"
+                  type="checkbox"
+                />
+                <label className="ml-2 block text-sm text-gray-900" htmlFor="remember_me">
+                  Remember me
+                </label>
+              </div>
+              <div className="text-sm">
+                <Link className="font-medium text-blue-600 hover:text-blue-500" to="/forgotpassword">
+                  Forgot Password?
+                </Link>
+              </div>
+            </div>
+            <div>
+              <button
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                type="submit"
+              >
+                Login
+              </button>
+            </div>
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or</span>
+              </div>
+            </div>
+            <div>
+              <button
+                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                type="button"
+              >
+                <img
+                  alt="Google logo"
+                  className="mr-2"
+                  height="20"
+                  src="https://storage.googleapis.com/a1aa/image/LOfhfkIf76RfRQrNLdP2ixLvUfPUomGZr3XSlyQmfUcrLeg5JA.jpg"
+                  width="20"
+                />
+                Sign In With Google
+              </button>
+            </div>
             <button
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               type="submit"
             >
               Login
             </button>
+
           </form>
         </div>
       </div>
