@@ -14,13 +14,13 @@ const Navbar = () => {
         {/* Menu Items */}
         <div className="hidden md:flex space-x-6 ml-auto mr-20">
           {['Home', 'About', 'Contact', 'Pricing'].map((item, index) => (
-            <a
+            <Link
               key={index}
-              href="#"
+              to={item === 'Home' ? '/' : `/${item.toLowerCase()}`} // Pengecualian untuk Home
               className="text-gray-600 hover:text-blue-600 transition duration-300 text-[16px] font-light"
             >
               {item}
-            </a>
+            </Link>
           ))}
         </div>
 

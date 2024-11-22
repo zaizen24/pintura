@@ -7,18 +7,74 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Directory untuk dependencies
+node_modules/
+jspm_packages/
+
+# Output folder
+dist/
+dist-ssr/
+build/
+public/
+
+# Environment file
+.env
+.env.*.local
+
+# System files
+.DS_Store
+Thumbs.db
 
 # Editor directories and files
-.vscode/*
+.vscode/
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# MacOS metadata
+._*
+
+# Optional npm cache directory
+.npm/
+
+# Optional yarn cache directory
+.yarn/
+.yarnrc.yml
+
+# Testing outputs
+coverage/
+*.lcov
+
+# Temp files
+*.tmp
+*.temp
+
+# Logs dari ESLint atau Prettier
+eslint_debug.log
+prettier-debug.log
+
+# Paket lock untuk memastikan konsistensi
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Folder SSL jika didefinisikan
+ssl/
+*.key
+*.crt
+*.pem
+
+# Lainnya
+*.bak
+*.old
+*.orig
