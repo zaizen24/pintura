@@ -1,4 +1,4 @@
-import Navbar from '../../components/public/HomePage/Navbar';
+import Navbar from '../../components/public/shared/Navbar';
 import HeroV1 from '../../components/public/HomePage/HeroV1';
 import StripV1 from '../../components/public/HomePage/StripV1';
 import SectionV3 from '../../components/public/HomePage/SectionV3';
@@ -8,7 +8,7 @@ import Highlight from '../../components/public/HomePage/Highlight';
 import Courses from '../../components/public/HomePage/Courses';
 import Testimonials from '../../components/public/HomePage/Testimonials';
 import CallToAction from '../../components/public/HomePage/CallToAction';
-import Footer from '../../components/public/HomePage/Footer';
+import Footer from '../../components/public/shared/Footer';
 
 import React from 'react'
 
