@@ -52,7 +52,7 @@ export default {
 		  },
 		},
 		fontFamily: {
-		  poppins: ["Poppins"],
+		  poppins: ["Poppins", "sans-serif"],
 		},
 	  },
 	},

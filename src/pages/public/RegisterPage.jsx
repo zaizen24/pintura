@@ -1,16 +1,17 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
+import Img from '../../assets/public/imgregisterpage.svg';
 
 const RegisterPage = () => {
   return (
-    <body className="bg-white flex items-center justify-center min-h-screen">
+    <body className="bg-white flex items-center justify-center min-h-screen font-poppins">
       <div className="flex w-full max-w-4xl">
         <div className="w-1/2 flex items-center justify-center">
           <img
             alt="Illustration of a person walking"
             className="w-3/4"
             height="400"
-            src="https://storage.googleapis.com/a1aa/image/xPFFXov0GtqZK1cC9awwAQ4CK7rpak6OfZJjQP2utL0X8g5JA.jpg"
+            src={Img}
             width="400"
           />
         </div>
