@@ -1,14 +1,67 @@
-import React from 'react'
+import React, { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { Link } from 'react-router-dom';
-import google from '../../assets/public/icongoogle.svg';
-import img from '../../assets/public/imgloginpage.svg';
 
 const LoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // Menambahkan header keamanan saat komponen dimuat
+  useEffect(() => {
+    document.title = 'Login Page'; // Menambahkan judul halaman
+
+    // Menambahkan Content-Security-Policy (CSP) header
+    const metaCSP = document.createElement('meta');
+    metaCSP.httpEquiv = 'Content-Security-Policy';
+    metaCSP.content = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:;";
+    document.head.appendChild(metaCSP);
+
+    // Menambahkan X-Frame-Options header
+    const metaFrameOptions = document.createElement('meta');
+    metaFrameOptions.httpEquiv = 'X-Frame-Options';
+    metaFrameOptions.content = 'DENY';
+    document.head.appendChild(metaFrameOptions);
+
+    // Menambahkan X-Content-Type-Options header
+    const metaContentTypeOptions = document.createElement('meta');
+    metaContentTypeOptions.httpEquiv = 'X-Content-Type-Options';
+    metaContentTypeOptions.content = 'nosniff';
+    document.head.appendChild(metaContentTypeOptions);
+
+    // Menambahkan Referrer-Policy header
+    const metaReferrerPolicy = document.createElement('meta');
+    metaReferrerPolicy.httpEquiv = 'Referrer-Policy';
+    metaReferrerPolicy.content = 'strict-origin-when-cross-origin';
+    document.head.appendChild(metaReferrerPolicy);
+
+    // Membersihkan header tambahan ketika komponen dilepas
+    return () => {
+      document.head.removeChild(metaCSP);
+      document.head.removeChild(metaFrameOptions);
+      document.head.removeChild(metaContentTypeOptions);
+      document.head.removeChild(metaReferrerPolicy);
+    };
+  }, []);
+
+  // Fungsi untuk menangani input pengguna
+  const handleInputChange = (e, setValue) => {
+    const sanitizedValue = DOMPurify.sanitize(e.target.value); // Sanitasi input pengguna
+    setValue(sanitizedValue);
+  };
+
+  // Fungsi untuk menangani submit
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('Email:', email);
+    console.log('Password:', password);
+    // Lakukan pemrosesan lebih lanjut, seperti mengirim data ke server
+  };
+
   return (
     <body class="bg-white flex items-center justify-center min-h-screen">
     <div class="flex w-full max-w-4xl">
    <div class="w-1/2 flex items-center justify-center">
-    <img alt="Illustration of a person walking" class="w-3/4" height="400" src={img} width="400"/>
+    <img alt="Illustration of a person walking" class="w-3/4" height="400" src="https://storage.googleapis.com/a1aa/image/xPFFXov0GtqZK1cC9awwAQ4CK7rpak6OfZJjQP2utL0X8g5JA.jpg" width="400"/>
    </div>
    <div class="w-1/2 flex flex-col justify-center p-8">
     <Link to="/"
@@ -78,21 +131,11 @@ const LoginPage = () => {
       </div>
      </div>
      <div>
-  <button
-    class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-    type="button"
-  >
-    <img
-      alt="Google logo"
-      class="mr-2"
-      height="20"
-      src={google}
-      width="20"
-    />
-    Sign In With Google
-  </button>
-</div>
-
+      <button class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" type="button">
+       <img alt="Google logo" class="mr-2" height="20" src="https://storage.googleapis.com/a1aa/image/LOfhfkIf76RfRQrNLdP2ixLvUfPUomGZr3XSlyQmfUcrLeg5JA.jpg" width="20"/>
+       Sign In With Google
+      </button>
+     </div>
     </form>
     <p class="mt-4 text-center text-sm text-gray-600">
      Haven't an Account?
@@ -106,4 +149,4 @@ const LoginPage = () => {
   )
 }
 
-export default LoginPage
+export default LoginPage;
