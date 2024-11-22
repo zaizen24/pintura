@@ -1,12 +1,14 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
+import google from '../../assets/public/icongoogle.svg';
+import img from '../../assets/public/imgloginpage.svg';
 
 const LoginPage = () => {
   return (
     <body class="bg-white flex items-center justify-center min-h-screen">
     <div class="flex w-full max-w-4xl">
    <div class="w-1/2 flex items-center justify-center">
-    <img alt="Illustration of a person walking" class="w-3/4" height="400" src="https://storage.googleapis.com/a1aa/image/xPFFXov0GtqZK1cC9awwAQ4CK7rpak6OfZJjQP2utL0X8g5JA.jpg" width="400"/>
+    <img alt="Illustration of a person walking" class="w-3/4" height="400" src={img} width="400"/>
    </div>
    <div class="w-1/2 flex flex-col justify-center p-8">
     <Link to="/"
@@ -76,11 +78,21 @@ const LoginPage = () => {
       </div>
      </div>
      <div>
-      <button class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50" type="button">
-       <img alt="Google logo" class="mr-2" height="20" src="https://storage.googleapis.com/a1aa/image/LOfhfkIf76RfRQrNLdP2ixLvUfPUomGZr3XSlyQmfUcrLeg5JA.jpg" width="20"/>
-       Sign In With Google
-      </button>
-     </div>
+  <button
+    class="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+    type="button"
+  >
+    <img
+      alt="Google logo"
+      class="mr-2"
+      height="20"
+      src={google}
+      width="20"
+    />
+    Sign In With Google
+  </button>
+</div>
+
     </form>
     <p class="mt-4 text-center text-sm text-gray-600">
      Haven't an Account?

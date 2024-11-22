@@ -1,10 +1,10 @@
 import React from 'react'
-import Logo from '../../assets/logo/logo.png';
+import Logo from '../../../assets/logo/logo.png';
 
 const Footer = () => {
   return (
     <div>
-       <footer className="bg-gray-200 py-8">
+       <footer className="bg-gray-200 py-8 font-poppins">
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center md:flex-row md:items-start md:justify-between">
             <div className="flex flex-col items-center md:items-start mb-8 md:mb-0 w-full md:w-1/4 mr-16">
