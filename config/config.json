@@ -2,7 +2,7 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "pintura_development", 
+    "database": "pintura", 
     "host": "127.0.0.1",
     "dialect": "mysql",
     "logging": true 
@@ -10,7 +10,7 @@
   "test": {
     "username": "root",
     "password": null,
-    "database": "pintura_test", 
+    "database": "pintura", 
     "host": "127.0.0.1",
     "dialect": "mysql",
     "logging": false 
@@ -18,7 +18,7 @@
   "production": {
     "username": "root",
     "password": null,
-    "database": "pintura_production", 
+    "database": "pintura", 
     "host": "127.0.0.1",
     "dialect": "mysql",
     "logging": false, 

@@ -1,10 +1,10 @@
-import express from 'express'; // Framework Express
-import { join, dirname } from 'path'; // Untuk path file
-import { fileURLToPath } from 'url'; // Untuk mendapatkan path file
-import cors from 'cors'; // Middleware CORS
-import jwt from 'jsonwebtoken'; // Untuk autentikasi berbasis token
+const express = require('express'); // Framework Express
+const path = require('path'); // Untuk path file/direktori
+const cors = require('cors'); // Middleware CORS
+const jwt = require('jsonwebtoken'); // Untuk autentikasi berbasis token
+const api = require('./api.js');
 
-const __dirname = dirname(fileURLToPath(import.meta.url)); // Mendapatkan direktori file ini
+
 const app = express(); // Membuat aplikasi Express
 
 // Middleware untuk parsing JSON
@@ -105,7 +105,7 @@ function authenticateToken(req, res, next) {
 }
 
 // Middleware untuk melayani file statis dari folder 'dist'
-app.use(express.static(join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // API endpoint umum
 app.get('/api/hello', (req, res) => {
@@ -119,7 +119,7 @@ app.get('/api/secure-data', authenticateToken, (req, res) => {
 
 // Route fallback untuk SPA (Single Page Application)
 app.get('*', (req, res) => {
-  res.sendFile(join(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-export default app; // Ekspor aplikasi untuk digunakan di server
+module.exports = app; // Ekspor aplikasi untuk digunakan di server
