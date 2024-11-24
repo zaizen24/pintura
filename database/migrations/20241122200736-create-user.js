@@ -16,7 +16,14 @@ module.exports = {
         type: Sequelize.STRING
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true // Pastikan email unik
+      },
+      role: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: 'user' // Nilai default untuk kolom role
       },
       createdAt: {
         allowNull: false,

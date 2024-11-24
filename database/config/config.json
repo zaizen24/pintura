@@ -2,22 +2,32 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "database_development",
+    "database": "pintura_development", 
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging": true 
   },
   "test": {
     "username": "root",
     "password": null,
-    "database": "database_test",
+    "database": "pintura_test", 
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging": false 
   },
   "production": {
     "username": "root",
     "password": null,
-    "database": "database_production",
+    "database": "pintura_production", 
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging": false, 
+    "ssl": true, 
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false 
+      }
+    }
   }
 }
