@@ -48,6 +48,16 @@ server.listen(HTTPS_PORT, () => {
   console.log(`✅ Server aman berjalan di ${APP_URL}:${HTTPS_PORT}`);
 });
 
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${HTTPS_PORT} is already in use.`);
+    process.exit(1); // Exit the process if the port is already in use
+  } else {
+    console.error('Server error:', err);
+    process.exit(1);
+  }
+});
+
 // Menangani error yang tidak ditangkap
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);

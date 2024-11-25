@@ -1,34 +1,63 @@
-import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const navigate = useNavigate(); // For navigating after login
 
-  useEffect(() => {
-    document.title = 'Login Page';
-    // ... (kode meta header tetap sama seperti sebelumnya)
-  }, []);
-
+  // Sanitize input values
   const handleInputChange = (e, setValue) => {
     const sanitizedValue = DOMPurify.sanitize(e.target.value);
     setValue(sanitizedValue);
   };
 
-  const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email && password) {
-      console.log('Login berhasil');
-      navigate('/dashboard'); // Arahkan ke /dashboard
-    } else {
-      console.log('Email dan password harus diisi');
+
+    if (!email || !password) {
+      setErrorMessage('Email and password are required');
+      return;
+    }
+
+    const userData = {
+      email,
+      password,
+      rememberMe,
+    };
+
+    try {
+      console.log('Sending login request to server...');
+      const response = await fetch('https://localhost:5000/api/auth/login', { // Ensure this is the correct endpoint
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Login successful:', data);
+        localStorage.setItem('authToken', data.token); // Save the token in localStorage
+        navigate('/dashboard'); // Navigate to dashboard after login
+      } else {
+        console.error('Login error:', data);
+        setErrorMessage('wrong email or password');
+      }
+    } catch (error) {
+      console.error('Something went wrong:', error);
+      setErrorMessage('Something went wrong. Please try again later.');
     }
   };
 
   return (
-    <body className="bg-white flex items-center justify-center min-h-screen">
+    <div className="bg-white flex items-center justify-center min-h-screen font-poppins">
       <div className="flex w-full max-w-4xl">
         <div className="w-1/2 flex items-center justify-center">
           <img
@@ -40,17 +69,13 @@ const LoginPage = () => {
           />
         </div>
         <div className="w-1/2 flex flex-col justify-center p-8">
-          <Link
-            to="/"
-            className="flex items-center bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300 px-4 py-2 text-[14px] w-20 mb-6"
-          >
-            <i className="fas fa-arrow-left mr-2"></i>
-            Back
-          </Link>
           <h1 className="text-4xl font-bold text-blue-700 mb-2">Welcome Back</h1>
           <p className="text-gray-600 mb-6">
             Enter your email and password below to log into your account.
           </p>
+
+          {errorMessage && <p className="text-red-600 text-center mb-4">{errorMessage}</p>}
+
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
               <label className="block text-sm font-medium text-gray-700">Email</label>
@@ -67,6 +92,7 @@ const LoginPage = () => {
                 />
               </div>
             </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700">Password</label>
               <div className="mt-1 relative rounded-md shadow-sm">
@@ -83,24 +109,16 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  id="remember_me"
-                  name="remember_me"
-                  type="checkbox"
-                />
-                <label className="ml-2 block text-sm text-gray-900" htmlFor="remember_me">
-                  Remember me
-                </label>
-              </div>
-              <div className="text-sm">
-                <Link className="font-medium text-blue-600 hover:text-blue-500" to="/forgotpassword">
-                  Forgot Password?
-                </Link>
-              </div>
+            <div className="flex items-center">
+              <input
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              <label className="ml-2 block text-sm text-gray-900">Remember Me</label>
             </div>
+
             <div>
               <button
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -136,7 +154,7 @@ const LoginPage = () => {
           </form>
         </div>
       </div>
-    </body>
+    </div>
   );
 };
 
