@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -150,7 +150,12 @@ const LoginPage = () => {
                 Sign In With Google
               </button>
             </div>
-
+            <p className="mt-2 text-center text-sm text-gray-600">
+              Don't have an account?{' '}
+              <Link className="font-medium text-blue-600 hover:text-blue-500" to="/register">
+                Register Now.
+              </Link>
+            </p>
           </form>
         </div>
       </div>
