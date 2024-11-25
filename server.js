@@ -5,7 +5,6 @@ const path = require('path');    // Mengelola path file/direktori
 const { constants } = require('crypto'); // Menggunakan 'constants' untuk SSL/TLS konfigurasi
 const app = require('./app.js'); // Mengimpor aplikasi Express
 
-
 // Memuat variabel dari file .env
 dotenv.config();
 
@@ -32,6 +31,17 @@ const sslOptions = {
 
 // Membuat server HTTPS dan menyimpannya dalam variabel
 const server = https.createServer(sslOptions, app);
+
+// Middleware to handle 404 errors
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Resource not found' });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ message: 'Internal server error' });
+});
 
 // Menjalankan server HTTPS
 server.listen(HTTPS_PORT, () => {

@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const authRoutes = require('./routes/route'); // Import rute otentikasi
+const authRoutes = require('./routes'); // Import routes
 const db = require('./database/models'); // Import database models
 
 const app = express();
@@ -10,7 +10,7 @@ app.use(bodyParser.json()); // Untuk memproses JSON
 app.use(bodyParser.urlencoded({ extended: true })); // Untuk memproses form-urlencoded
 
 // Routes
-app.use('/api/auth', authRoutes); // Prefix untuk rute otentikasi
+app.use('/api/auth', authRoutes); // Prefix for auth routes
 
 // Database connection
 db.sequelize.authenticate()

@@ -31,8 +31,13 @@ const register = async (req, res) => {
     const newUser = await User.create({
       firstName,
       lastName,
+      name: `${firstName} ${lastName}`, // Combine firstName and lastName to create name
       email,
       password: hashedPassword,
+      role_id: null,  // If this is optional, you can pass null
+      created_at: new Date(),
+      updated_at: new Date(),  // Set created_at explicitly if necessary
+      deleted_at: null, // Explicitly set deleted_at to null
     });
 
     return res.status(201).json({ message: 'User registered successfully!' });

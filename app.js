@@ -3,7 +3,7 @@ const path = require('path'); // Untuk path file/direktori
 const cors = require('cors'); // Middleware CORS
 const jwt = require('jsonwebtoken'); // Untuk autentikasi berbasis token
 const api = require('./api.js');
-
+const routes = require('./routes'); // Import routes
 
 const app = express(); // Membuat aplikasi Express
 
@@ -11,7 +11,7 @@ const app = express(); // Membuat aplikasi Express
 app.use(express.json());
 
 // Daftar origin yang diizinkan untuk CORS
-const allowedOrigins = ['http://localhost:3000', 'https://localhost:5000'];
+const allowedOrigins = ['https://localhost:3000', 'https://localhost:5000', 'https://yourdomain.com']; // Ensure correct origins
 
 // Konfigurasi middleware CORS
 app.use(
@@ -77,7 +77,7 @@ app.use((req, res, next) => {
     "style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; " +
     "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
     "img-src 'self' data: https:; " +
-    "connect-src 'self'; " +
+    "connect-src 'self' http://localhost:5000; " + // Allow connections to localhost:5000
     "frame-ancestors 'none';" // Prevent clickjacking
   );
   res.setHeader('X-Frame-Options', 'DENY'); // Perlindungan clickjacking
@@ -116,6 +116,9 @@ app.get('/api/hello', (req, res) => {
 app.get('/api/secure-data', authenticateToken, (req, res) => {
   res.json({ message: `Hello, ${req.user.name || 'user'}! You have access to secure data.` });
 });
+
+// Use routes
+app.use('/api/auth', routes);
 
 // Route fallback untuk SPA (Single Page Application)
 app.get('*', (req, res) => {
