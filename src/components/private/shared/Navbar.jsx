@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
@@ -13,7 +14,7 @@ const Navbar = () => {
           <input
             type="text"
             placeholder="Type a command or search..."
-            className="w-full p-2 rounded-full bg-gray-100 text-gray-500"
+            className="w-full p-2  rounded-full bg-gray-100 text-gray-500"
           />
         </div>
         <div className="flex items-center space-x-4">
@@ -31,12 +32,22 @@ const Navbar = () => {
       </div>
 
       {/* Navigation Section */}
-      <div className="flex items-center space-x-8 p-4 bg-white">
-        <div className="p-2 bg-gray-100 rounded text-blue-600">Home</div>
-        <div className="text-gray-500">My Courses</div>
-        <div className="text-gray-500">Workshop</div>
-        <div className="text-gray-500">Community</div>
-        <div className="text-gray-500">Settings</div>
+      <div className="flex items-center space-x-8 pl-4 bg-white">
+        <Link to="/" className="p-2 bg-gray-100 rounded text-blue-600">
+          Home
+        </Link>
+        <Link to="/courses" className="text-gray-500">
+          My Courses
+        </Link>
+        <Link to="/workshop" className="text-gray-500">
+          Workshop
+        </Link>
+        <Link to="/community" className="text-gray-500">
+          Community
+        </Link>
+        <Link to="/settings" className="text-gray-500">
+          Settings
+        </Link>
       </div>
     </div>
   );
