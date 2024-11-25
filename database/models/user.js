@@ -1,65 +1,61 @@
 'use strict';
 
-export default {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Users', {
-      id: {
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define(
+    'User',
+    {
+      user_id: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        autoIncrement: true, // Tambahkan autoIncrement jika ingin auto generate
       },
-      firstName: {
-        type: Sequelize.STRING,
+      name: {
+        type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          len: [2, 50], // Minimal 2 karakter, maksimal 50
-        },
-      },
-      lastName: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        validate: {
-          len: [2, 50], // Minimal 2 karakter, maksimal 50
-        },
       },
       email: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
-        validate: {
-          isEmail: true, // Validasi format email
-        },
+        unique: true, // Email harus unik
       },
       password: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          len: [8, 100], // Minimal 8 karakter
-        },
       },
-      role: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        defaultValue: 'user',
-        validate: {
-          isIn: [['user', 'admin']], // Role hanya boleh 'user' atau 'admin'
-        },
+      role_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        defaultValue: null, // Sesuai dengan skema database
       },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW, // Default waktu sekarang
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'), // Default ke waktu saat ini
       },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW, // Default waktu sekarang
+      updated_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'), // Update otomatis
       },
-    });
-  },
+      deleted_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        defaultValue: null, // Null by default
+      },
+    },
+    {
+      tableName: 'users', // Nama tabel sesuai database
+      timestamps: false, // Matikan timestamps jika tidak menggunakan `createdAt` dan `updatedAt` default Sequelize
+      paranoid: true, // Mengaktifkan soft delete menggunakan `deleted_at`
+    }
+  );
 
-  down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Users');
-  },
+  // Hubungkan relasi model jika ada
+  User.associate = (models) => {
+    // Contoh relasi dengan tabel lain
+    // User.belongsTo(models.Role, { foreignKey: 'role_id' });
+  };
+
+  return User;
 };

@@ -1,17 +1,17 @@
-import express from 'express'; // Framework Express
-import { join, dirname } from 'path'; // Untuk path file
-import { fileURLToPath } from 'url'; // Untuk mendapatkan path file
-import cors from 'cors'; // Middleware CORS
-import jwt from 'jsonwebtoken'; // Untuk autentikasi berbasis token
+const express = require('express'); // Framework Express
+const path = require('path'); // Untuk path file/direktori
+const cors = require('cors'); // Middleware CORS
+const jwt = require('jsonwebtoken'); // Untuk autentikasi berbasis token
+const api = require('./api.js');
+const routes = require('./routes'); // Import routes
 
-const __dirname = dirname(fileURLToPath(import.meta.url)); // Mendapatkan direktori file ini
 const app = express(); // Membuat aplikasi Express
 
 // Middleware untuk parsing JSON
 app.use(express.json());
 
 // Daftar origin yang diizinkan untuk CORS
-const allowedOrigins = ['http://localhost:3000', 'https://localhost:5000'];
+const allowedOrigins = ['https://localhost:3000', 'https://localhost:5000', 'https://yourdomain.com']; // Ensure correct origins
 
 // Konfigurasi middleware CORS
 app.use(
@@ -77,7 +77,7 @@ app.use((req, res, next) => {
     "style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; " +
     "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
     "img-src 'self' data: https:; " +
-    "connect-src 'self'; " +
+    "connect-src 'self' http://localhost:5000; " + // Allow connections to localhost:5000
     "frame-ancestors 'none';" // Prevent clickjacking
   );
   res.setHeader('X-Frame-Options', 'DENY'); // Perlindungan clickjacking
@@ -105,7 +105,7 @@ function authenticateToken(req, res, next) {
 }
 
 // Middleware untuk melayani file statis dari folder 'dist'
-app.use(express.static(join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // API endpoint umum
 app.get('/api/hello', (req, res) => {
@@ -117,9 +117,12 @@ app.get('/api/secure-data', authenticateToken, (req, res) => {
   res.json({ message: `Hello, ${req.user.name || 'user'}! You have access to secure data.` });
 });
 
+// Use routes
+app.use('/api/auth', routes);
+
 // Route fallback untuk SPA (Single Page Application)
 app.get('*', (req, res) => {
-  res.sendFile(join(__dirname, 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-export default app; // Ekspor aplikasi untuk digunakan di server
+module.exports = app; // Ekspor aplikasi untuk digunakan di server

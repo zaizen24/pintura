@@ -1,43 +1,60 @@
 'use strict';
-import { DataTypes } from 'sequelize';
 
-export default {
-  async up(queryInterface) {
-    await queryInterface.createTable('Users', {
-      id: {
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('users', {
+      user_id: {
+        type: Sequelize.INTEGER,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
-        type: DataTypes.INTEGER
+        autoIncrement: true,
       },
       firstName: {
-        type: DataTypes.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       lastName: {
-        type: DataTypes.STRING
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
       },
       email: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING,
         allowNull: false,
-        unique: true // Pastikan email unik
+        unique: true,
       },
-      role: {
-        type: DataTypes.STRING,
+      password: {
+        type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: 'user' // Nilai default untuk kolom role
       },
-      createdAt: {
-        allowNull: false,
-        type: DataTypes.DATE
+      role_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        defaultValue: null,
       },
-      updatedAt: {
-        allowNull: false,
-        type: DataTypes.DATE
-      }
+      created_at: {
+        type: Sequelize.DATE,
+        allowNull: true,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      updated_at: {
+        type: Sequelize.DATE,
+        allowNull: true,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        onUpdate: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      deleted_at: {
+        type: Sequelize.DATE,
+        allowNull: true,
+        defaultValue: null,
+      },
     });
   },
 
-  async down(queryInterface) {
-    await queryInterface.dropTable('Users');
-  }
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('users');
+  },
 };
