@@ -1,73 +1,83 @@
-import express from 'express';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
-import https from 'https';
-import fs from 'fs';
+const dotenv = require('dotenv'); // Memuat variabel lingkungan dari file .env
+const https = require('https');  // Membuat server HTTPS
+const fs = require('fs');        // Mengakses file sistem
+const path = require('path');    // Mengelola path file/direktori
+const { constants } = require('crypto'); // Menggunakan 'constants' untuk SSL/TLS konfigurasi
+const app = require('./app.js'); // Mengimpor aplikasi Express
 
-const __dirname = dirname(fileURLToPath(import.meta.url)); // Mendapatkan __dirname dalam modul ESM
+// Memuat variabel dari file .env
+dotenv.config();
 
-const app = express();
+// Validasi variabel lingkungan penting
+const requiredEnvVars = ['APP_URL', 'HTTPS_PORT', 'SSL_KEY_PATH', 'SSL_CERT_PATH', 'JWT_SECRET'];
+const missingVars = requiredEnvVars.filter((key) => !process.env[key]);
 
-// Konfigurasi HTTPS
+if (missingVars.length > 0) {
+  console.error(`ERROR: Variabel lingkungan berikut tidak ditemukan: ${missingVars.join(', ')}`);
+  process.exit(1); // Menghentikan aplikasi jika variabel penting tidak ditemukan
+}
+
+// Mendapatkan port dan URL dari variabel lingkungan
+const HTTPS_PORT = process.env.HTTPS_PORT || 5000; // Default ke 5000 jika HTTPS_PORT tidak diatur
+const APP_URL = process.env.APP_URL;
+
+// Konfigurasi SSL/TLS untuk server HTTPS
 const sslOptions = {
-  key: fs.readFileSync('private.key'), // Jalur ke kunci privat
-  cert: fs.readFileSync('certificate.crt'), // Jalur ke sertifikat
+  key: fs.readFileSync(path.resolve(process.env.SSL_KEY_PATH)), // Membaca file private key SSL
+  cert: fs.readFileSync(path.resolve(process.env.SSL_CERT_PATH)), // Membaca file sertifikat SSL
+  ca: process.env.SSL_CA_PATH ? fs.readFileSync(path.resolve(process.env.SSL_CA_PATH)) : undefined, // CA opsional
+  secureOptions: constants.SSL_OP_NO_TLSv1 | constants.SSL_OP_NO_TLSv1_1, // Menonaktifkan TLSv1 dan TLSv1.1
 };
 
-// Percayai proxy jika di belakang proxy (Nginx, AWS ELB, dll.)
-app.set('trust proxy', true);
+// Membuat server HTTPS dan menyimpannya dalam variabel
+const server = https.createServer(sslOptions, app);
 
-// Middleware Keamanan
+// Middleware to handle 404 errors
 app.use((req, res, next) => {
-  res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  res.setHeader(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; " +
-    "style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com 'unsafe-inline'; " +
-    "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https: data:;"
-  );
-  res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-  next();
+  res.status(404).json({ message: 'Resource not found' });
 });
 
-// Hapus header X-Powered-By
-app.disable('x-powered-by');
-
-// Middleware untuk melayani file statis dari folder 'dist'
-app.use(express.static(join(__dirname, 'dist')));
-
-// Middleware tambahan untuk file tertentu seperti JSX
-app.use((req, res, next) => {
-  if (req.url.endsWith('.jsx')) {
-    res.setHeader('Content-Type', 'application/javascript');
-  }
-  next();
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ message: 'Internal server error' });
 });
 
-// API Endpoint
-app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello from Secure Express.js!' });
+// Menjalankan server HTTPS
+server.listen(HTTPS_PORT, () => {
+  console.log(`✅ Server aman berjalan di ${APP_URL}:${HTTPS_PORT}`);
 });
 
-// Route fallback untuk SPA
-app.get('*', (req, res) => {
-  res.sendFile(join(__dirname, 'dist', 'index.html'));
+// Menangani error yang tidak ditangkap
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  server.close(() => {
+    console.log('HTTP server closed due to uncaught exception');
+    process.exit(1); // Keluar dari aplikasi jika terjadi error tak terduga
+  });
 });
 
-// Blokir robots.txt
-app.use((req, res, next) => {
-  if (req.url === '/robots.txt') {
-    res.status(403).send('Access to robots.txt is restricted');
-  } else {
-    next();
-  }
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  server.close(() => {
+    console.log('HTTP server closed due to unhandled rejection');
+    process.exit(1); // Keluar dari aplikasi jika ada promise yang tidak ditangani
+  });
 });
 
-// Jalankan server HTTPS
-const HTTPS_PORT = process.env.HTTPS_PORT || 5000;
-https.createServer(sslOptions, app).listen(HTTPS_PORT, () => {
-  console.log(`Secure server running on https://localhost:${HTTPS_PORT}`);
+// Graceful shutdown untuk menangani SIGTERM atau SIGINT
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  server.close(() => {
+    console.log('HTTP server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT signal received: closing HTTP server');
+  server.close(() => {
+    console.log('HTTP server closed');
+    process.exit(0);
+  });
 });

@@ -1,9 +1,9 @@
 import React from "react";
-import Img from '../../assets/public/imgHeroV1.svg';
+import Img from '../../../assets/public/imgHeroV1.svg';
 
 const HeroV1 = () => {
   return (
-    <section className="bg-white py-16 mt-8">
+    <section className="bg-white py-16 mt-8 font-poppins">
       <div className="container mx-auto flex flex-col lg:flex-row items-center justify-between px-6 lg:px-16">
         {/* Teks Hero */}
         <div className="text-center lg:text-left max-w-lg mb-8 lg:mb-0">
