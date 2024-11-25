@@ -3,7 +3,7 @@ const path = require('path'); // Untuk path file/direktori
 const cors = require('cors'); // Middleware CORS
 const jwt = require('jsonwebtoken'); // Untuk autentikasi berbasis token
 const api = require('./api.js');
-const routes = require('./routes'); // Import routes
+const routes = require('./routes/route'); // Correct import path for routes
 
 const app = express(); // Membuat aplikasi Express
 
@@ -77,7 +77,7 @@ app.use((req, res, next) => {
     "style-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; " +
     "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
     "img-src 'self' data: https:; " +
-    "connect-src 'self' http://localhost:5000; " + // Allow connections to localhost:5000
+    "connect-src 'self' https://localhost:5000; " + // Changed to https
     "frame-ancestors 'none';" // Prevent clickjacking
   );
   res.setHeader('X-Frame-Options', 'DENY'); // Perlindungan clickjacking
@@ -123,6 +123,17 @@ app.use('/api/auth', routes);
 // Route fallback untuk SPA (Single Page Application)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+// Middleware to handle 404 errors
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Resource not found' });
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ message: 'Internal server error' });
 });
 
 module.exports = app; // Ekspor aplikasi untuk digunakan di server
