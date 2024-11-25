@@ -4,6 +4,8 @@ const fs = require('fs');        // Mengakses file sistem
 const path = require('path');    // Mengelola path file/direktori
 const { constants } = require('crypto'); // Menggunakan 'constants' untuk SSL/TLS konfigurasi
 const app = require('./app.js'); // Mengimpor aplikasi Express
+const bodyParser = require('body-parser'); // Add body-parser for parsing request bodies
+const { User } = require('./database/models'); // Import User model
 
 // Memuat variabel dari file .env
 dotenv.config();
@@ -31,6 +33,21 @@ const sslOptions = {
 
 // Membuat server HTTPS dan menyimpannya dalam variabel
 const server = https.createServer(sslOptions, app);
+
+app.use(bodyParser.json()); // Use body-parser middleware
+
+// Route for user registration
+app.post('/api/register', async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    const newUser = await User.create({ name, email, password });
+    res.status(201).json({ message: 'User registered successfully', user: newUser });
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 // Middleware to handle 404 errors
 app.use((req, res, next) => {
