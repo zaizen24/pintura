@@ -3,7 +3,7 @@ const path = require('path'); // Untuk path file/direktori
 const cors = require('cors'); // Middleware CORS
 const jwt = require('jsonwebtoken'); // Untuk autentikasi berbasis token
 const api = require('./api.js');
-const routes = require('./routes/route'); // Correct import path for routes
+const routes = require('./routes/routes.js'); // Correct import path for routes
 
 const app = express(); // Membuat aplikasi Express
 

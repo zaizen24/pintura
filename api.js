@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const authRoutes = require('./routes'); // Import routes
+const authRoutes = require('./routes/routes'); // Import routes
 const db = require('./database/models'); // Import database models
 
 const app = express();
@@ -18,5 +18,3 @@ db.sequelize.authenticate()
   .catch(err => console.error('Database connection failed:', err));
 
 // ...existing code...
-
-
