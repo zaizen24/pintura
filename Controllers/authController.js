@@ -93,7 +93,19 @@ const login = async (req, res) => {
   }
 };
 
+// logout function
+const logout = async (req, res) => {
+  try {
+    // Implement logout functionality here
+    return res.status(200).json({ message: 'Logout successful.' });
+  } catch (error) {
+    console.error('Error during logout:', error);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
 module.exports = {
   register,
   login,
+  logout,
 };

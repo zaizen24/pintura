@@ -1,6 +1,6 @@
 const express = require('express');
 const passport = require('passport'); // Add this line
-const { register, login } = require('../Controllers/authController');
+const { register, login, logout } = require('../Controllers/authController');
 
 const router = express.Router();
 
@@ -13,6 +13,12 @@ router.post('/login', (req, res, next) => {
   console.log('Login route hit');
   next();
 }, login);
+
+// logout
+router.post('/logout', (req, res, next) => {
+  console.log('Logout route hit');
+  next();
+}, logout);
 
 router.get('/google-register', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
