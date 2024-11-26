@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const authRoutes = require('./routes'); // Import routes
+const authRoutes = require('./routes/route'); // Correct import path for routes
 const db = require('./database/models'); // Import database models
 
 const app = express();
