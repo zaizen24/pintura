@@ -6,12 +6,14 @@ const { constants } = require('crypto'); // Menggunakan 'constants' untuk SSL/TL
 const app = require('./app.js'); // Mengimpor aplikasi Express
 const bodyParser = require('body-parser'); // Add body-parser for parsing request bodies
 const { User } = require('./database/models'); // Import User model
+const passport = require('passport'); // Import passport
+const GoogleStrategy = require('passport-google-oauth20').Strategy; // Import Google OAuth strategy
 
 // Memuat variabel dari file .env
 dotenv.config();
 
 // Validasi variabel lingkungan penting
-const requiredEnvVars = ['APP_URL', 'HTTPS_PORT', 'SSL_KEY_PATH', 'SSL_CERT_PATH', 'JWT_SECRET'];
+const requiredEnvVars = ['APP_URL', 'HTTPS_PORT', 'SSL_KEY_PATH', 'SSL_CERT_PATH', 'JWT_SECRET', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'];
 const missingVars = requiredEnvVars.filter((key) => !process.env[key]);
 
 if (missingVars.length > 0) {
@@ -31,10 +33,41 @@ const sslOptions = {
   secureOptions: constants.SSL_OP_NO_TLSv1 | constants.SSL_OP_NO_TLSv1_1, // Menonaktifkan TLSv1 dan TLSv1.1
 };
 
+// Passport configuration
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: `${APP_URL}/auth/google/callback`
+}, async (token, tokenSecret, profile, done) => {
+  try {
+    let user = await User.findOne({ where: { googleId: profile.id } });
+    if (!user) {
+      user = await User.create({ googleId: profile.id, name: profile.displayName, email: profile.emails[0].value });
+    }
+    return done(null, user);
+  } catch (error) {
+    return done(error, null);
+  }
+}));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findByPk(id);
+    done(null, user);
+  } catch (error) {
+    done(error, null);
+  }
+});
+
 // Membuat server HTTPS dan menyimpannya dalam variabel
 const server = https.createServer(sslOptions, app);
 
 app.use(bodyParser.json()); // Use body-parser middleware
+app.use(passport.initialize()); // Initialize passport
 
 // Route for user registration
 app.post('/api/register', async (req, res) => {
@@ -47,6 +80,13 @@ app.post('/api/register', async (req, res) => {
     console.error('Error registering user:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
+});
+
+// Route for Google OAuth
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
+  res.redirect('/'); // Redirect to home page after successful login
 });
 
 // Middleware to handle 404 errors

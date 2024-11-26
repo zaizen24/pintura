@@ -30,4 +30,14 @@ router.get('/google/callback',
   }
 );
 
+// Handle SSL errors
+router.use((err, req, res, next) => {
+  if (err.code === 'ERR_SSL_PROTOCOL_ERROR') {
+    console.error('SSL Protocol Error:', err);
+    res.status(500).json({ message: 'SSL Protocol Error' });
+  } else {
+    next(err);
+  }
+});
+
 module.exports = router;
