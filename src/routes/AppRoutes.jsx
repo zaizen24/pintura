@@ -1,13 +1,13 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from '../pages/public/HomePage';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import DashboardPage from '../pages/private/DashboardPage';
 import AboutPage from '../pages/public/AboutPage';
 import ContactPage from '../pages/public/ContactPage';
-import PricingPage from '../pages/public/PricingPage';
-import LoginPage from '../pages/public/LoginPage';
-import RegisterPage from '../pages/public/RegisterPage';
 import ForgotPasswordPage from '../pages/public/ForgotPasswordPage';
-import DashboardPage from '../pages/private/DashboardPage';
+import GoogleCallback from '../pages/public/GoogleCallback';
+import HomePage from '../pages/public/HomePage';
+import LoginPage from '../pages/public/LoginPage';
+import PricingPage from '../pages/public/PricingPage';
+import RegisterPage from '../pages/public/RegisterPage';
 
 const AppRoutes = () => {
   return (
@@ -21,6 +21,7 @@ const AppRoutes = () => {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/auth/google/callback" element={<GoogleCallback />} />
       </Routes>
     </Router>
   );

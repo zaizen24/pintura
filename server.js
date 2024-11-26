@@ -37,18 +37,29 @@ const sslOptions = {
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: `${APP_URL}/auth/google/callback`
+  callbackURL: `${process.env.APP_URL}:${process.env.HTTPS_PORT}/auth/google/callback`
 }, async (token, tokenSecret, profile, done) => {
   try {
+    console.log('Google profile received:', profile); // Log profil Google
     let user = await User.findOne({ where: { googleId: profile.id } });
     if (!user) {
-      user = await User.create({ googleId: profile.id, name: profile.displayName, email: profile.emails[0].value });
+      console.log('User not found. Creating a new user...');
+      user = await User.create({
+        googleId: profile.id,
+        name: profile.displayName,
+        email: profile.emails[0].value,
+      });
+      console.log('New user created:', user);
+    } else {
+      console.log('Existing user found:', user);
     }
     return done(null, user);
   } catch (error) {
+    console.error('Error in Google OAuth strategy:', error);
     return done(error, null);
   }
 }));
+
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -85,9 +96,27 @@ app.post('/api/register', async (req, res) => {
 // Route for Google OAuth
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }), (req, res) => {
-  res.redirect('/'); // Redirect to home page after successful login
+app.get('/auth/google/callback', (req, res, next) => {
+  passport.authenticate('google', (err, user, info) => {
+    if (err) {
+      console.error('Authentication error:', err); // Debug error
+      return res.status(500).json({ message: 'Authentication failed', error: err });
+    }
+    if (!user) {
+      console.error('No user found. Redirecting to home...');
+      return res.redirect('/'); // Redirect ke home jika user tidak ditemukan
+    }
+    req.login(user, (err) => {
+      if (err) {
+        console.error('Error during login:', err); // Debug login error
+        return res.status(500).json({ message: 'Login failed', error: err });
+      }
+      console.log('User successfully logged in:', user); // Debug sukses login
+      return res.redirect('/dashboard'); // Redirect ke dashboard setelah login
+    });
+  })(req, res, next);
 });
+
 
 // Middleware to handle 404 errors
 app.use((req, res, next) => {

@@ -25,8 +25,7 @@ router.get('/google-register', passport.authenticate('google', { scope: ['profil
 router.get('/google/callback', 
   passport.authenticate('google', { failureRedirect: '/' }), 
   function(req, res) {
-    // On successful login, redirect to dashboard
-    res.redirect('/dashboard'); // Change this as needed to navigate
+    res.redirect('/dashboard');
   }
 );
 
