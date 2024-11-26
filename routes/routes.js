@@ -25,9 +25,18 @@ router.get('/google-register', passport.authenticate('google', { scope: ['profil
 router.get('/google/callback', 
   passport.authenticate('google', { failureRedirect: '/' }), 
   function(req, res) {
-    // On successful login, redirect to dashboard
-    res.redirect('/dashboard'); // Change this as needed to navigate
+    res.redirect('/dashboard');
   }
 );
+
+// Handle SSL errors
+router.use((err, req, res, next) => {
+  if (err.code === 'ERR_SSL_PROTOCOL_ERROR') {
+    console.error('SSL Protocol Error:', err);
+    res.status(500).json({ message: 'SSL Protocol Error' });
+  } else {
+    next(err);
+  }
+});
 
 module.exports = router;

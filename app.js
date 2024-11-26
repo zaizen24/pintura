@@ -3,7 +3,8 @@ const path = require('path'); // Untuk path file/direktori
 const cors = require('cors'); // Middleware CORS
 const jwt = require('jsonwebtoken'); // Untuk autentikasi berbasis token
 const api = require('./api.js');
-const routes = require('./routes/routes.js'); // Correct import path for routes
+const routes = require('./routes/routes'); // Correct import path for routes
+const passport = require('passport'); // Import passport
 
 const app = express(); // Membuat aplikasi Express
 
@@ -89,6 +90,9 @@ app.use((req, res, next) => {
 
 // Nonaktifkan header X-Powered-By untuk menyembunyikan framework
 app.disable('x-powered-by');
+
+// Initialize passport
+app.use(passport.initialize());
 
 // Middleware untuk autentikasi token JWT
 function authenticateToken(req, res, next) {
