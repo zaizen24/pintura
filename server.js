@@ -46,8 +46,12 @@ passport.use(new GoogleStrategy({
       console.log('User not found. Creating a new user...');
       user = await User.create({
         googleId: profile.id,
-        name: profile.displayName,
-        email: profile.emails[0].value,
+  name: profile.displayName,
+  email: profile.emails[0].value,
+  password: '', // Set password to empty string or handle it appropriately
+  created_at: new Date(), // Menambahkan created_at
+  updated_at: new Date(), // Menambahkan updated_at
+  deleted_at: null, // Atur deleted_at ke null (atau kamu bisa biarkan sesuai logika soft delete)
       });
       console.log('New user created:', user);
     } else {
@@ -93,7 +97,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Route for Google OAuth
+// Route for Google OAuth registration
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback', (req, res, next) => {
@@ -116,7 +120,6 @@ app.get('/auth/google/callback', (req, res, next) => {
     });
   })(req, res, next);
 });
-
 
 // Middleware to handle 404 errors
 app.use((req, res, next) => {
