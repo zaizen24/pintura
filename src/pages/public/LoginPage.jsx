@@ -1,6 +1,8 @@
 import DOMPurify from 'dompurify';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Img from '../../assets/public/imgloginpage.svg'
+import icon from '../../assets/public/icongoogle.svg'
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -64,11 +66,14 @@ const LoginPage = () => {
             alt="Illustration of a person walking"
             className="w-3/4"
             height="400"
-            src="https://storage.googleapis.com/a1aa/image/xPFFXov0GtqZK1cC9awwAQ4CK7rpak6OfZJjQP2utL0X8g5JA.jpg"
+            src={Img}
             width="400"
           />
         </div>
         <div className="w-1/2 flex flex-col justify-center p-8">
+        <Link to="/" className="flex items-center bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-300 px-4 py-2 text-[14px] w-20 mb-6">
+            <i className="fas fa-arrow-left mr-2"></i>Back
+          </Link>
           <h1 className="text-4xl font-bold text-blue-700 mb-2">Welcome Back</h1>
           <p className="text-gray-600 mb-6">
             Enter your email and password below to log into your account.
@@ -144,7 +149,7 @@ const LoginPage = () => {
                   alt="Google logo"
                   className="mr-2"
                   height="20"
-                  src="https://storage.googleapis.com/a1aa/image/LOfhfkIf76RfRQrNLdP2ixLvUfPUomGZr3XSlyQmfUcrLeg5JA.jpg"
+                  src={icon}
                   width="20"
                 />
                 Sign In With Google
