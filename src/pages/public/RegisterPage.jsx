@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import Img from '../../assets/public/imgregisterpage.svg';
+import icon from '../../assets/public/icongoogle.svg'
+
 
 const RegisterPage = () => {
   const [firstName, setFirstName] = useState('');
@@ -189,7 +191,7 @@ const RegisterPage = () => {
                   alt="Google logo"
                   className="mr-2"
                   height="20"
-                  src="https://storage.googleapis.com/a1aa/image/LOfhfkIf76RfRQrNLdP2ixLvUfPUomGZr3XSlyQmfUcrLeg5JA.jpg"
+                  src={icon}
                   width="20"
                 />
                 Sign In With Google
