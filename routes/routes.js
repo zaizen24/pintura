@@ -22,7 +22,7 @@ router.post('/logout', (req, res, next) => {
   next();
 }, logout);
 
-// update profile
+/* // update profile
 router.put('/profile', (req, res, next) => {
   console.log('Update profile route hit');
   next();
@@ -124,7 +124,7 @@ router.post('/payment', (req,res,next)=>{
   console.log('payment')
   next();
 }, payment);
-
+ */
 // Define routes for Google OAuth
 router.get('/google-register', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
