@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport'); // Add this line
 const { register, login, logout } = require('../Controllers/authController');
+const googleController = require('../Controllers/googleController');
 
 const router = express.Router();
 
@@ -28,6 +29,10 @@ router.get('/google/callback',
     res.redirect('/dashboard');
   }
 );
+
+// Define routes for Google OAuth
+router.get('/auth/google', googleController.googleAuth);
+router.get('/auth/google/callback', googleController.googleAuthCallback);
 
 // Handle SSL errors
 router.use((err, req, res, next) => {

@@ -8,6 +8,7 @@ const bodyParser = require('body-parser'); // Add body-parser for parsing reques
 const { User } = require('./database/models'); // Import User model
 const passport = require('passport'); // Import passport
 const GoogleStrategy = require('passport-google-oauth20').Strategy; // Import Google OAuth strategy
+const session = require('express-session'); // Import express-session
 
 // Memuat variabel dari file .env
 dotenv.config();
@@ -46,8 +47,12 @@ passport.use(new GoogleStrategy({
       console.log('User not found. Creating a new user...');
       user = await User.create({
         googleId: profile.id,
-        name: profile.displayName,
-        email: profile.emails[0].value,
+  name: profile.displayName,
+  email: profile.emails[0].value,
+  password: '', // Set password to empty string or handle it appropriately
+  created_at: new Date(), // Menambahkan created_at
+  updated_at: new Date(), // Menambahkan updated_at
+  deleted_at: null, // Atur deleted_at ke null (atau kamu bisa biarkan sesuai logika soft delete)
       });
       console.log('New user created:', user);
     } else {
@@ -80,6 +85,38 @@ const server = https.createServer(sslOptions, app);
 app.use(bodyParser.json()); // Use body-parser middleware
 app.use(passport.initialize()); // Initialize passport
 
+// Configure session and cookie settings
+app.use(session({
+  secret: process.env.JWT_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // Ensure the cookie is only used over HTTPS in production
+    httpOnly: true, // Prevent JavaScript access to the cookie
+    sameSite: 'None' // Allow cross-site cookies
+  }
+}));
+
+// Passport middleware setelah session
+app.use(passport.initialize());
+app.use(passport.session()); // Inisialisasi sesi passport
+
+// Middleware to handle OpaqueResponseBlocking errors
+app.use((req, res, next) => {
+  if (res.statusCode === 0) {
+    console.error('Blocked by OpaqueResponseBlocking:', req.originalUrl);
+    return res.status(403).json({ message: 'Blocked by OpaqueResponseBlocking' });
+  }
+  next();
+});
+
+// Add headers to allow third-party cookies and storage access
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL);
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
 // Route for user registration
 app.post('/api/register', async (req, res) => {
   const { name, email, password } = req.body;
@@ -93,7 +130,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Route for Google OAuth
+// Route for Google OAuth registration
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback', (req, res, next) => {
@@ -116,7 +153,6 @@ app.get('/auth/google/callback', (req, res, next) => {
     });
   })(req, res, next);
 });
-
 
 // Middleware to handle 404 errors
 app.use((req, res, next) => {

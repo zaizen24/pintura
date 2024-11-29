@@ -123,6 +123,7 @@ app.get('/api/secure-data', authenticateToken, (req, res) => {
 
 // Use routes
 app.use('/api/auth', routes);
+app.use(routes);
 
 // Route fallback untuk SPA (Single Page Application)
 app.get('*', (req, res) => {
