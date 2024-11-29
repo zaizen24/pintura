@@ -32,6 +32,12 @@ app.use(
   })
 );
 
+// Middleware to handle third-party cookies
+app.use((req, res, next) => {
+  res.setHeader('Set-Cookie', 'SameSite=None; Secure');
+  next();
+});
+
 // Middleware untuk memblokir akses ke alamat IP metadata cloud
 app.use((req, res, next) => {
   const forbiddenIps = ['169.254.169.254'];
