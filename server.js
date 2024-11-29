@@ -60,6 +60,10 @@ passport.use(new GoogleStrategy({
     }
     return done(null, user);
   } catch (error) {
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      console.error('Email already exists:', error.errors[0].message);
+      return done(null, false, { message: 'Email already exists' });
+    }
     console.error('Error in Google OAuth strategy:', error);
     return done(error, null);
   }
