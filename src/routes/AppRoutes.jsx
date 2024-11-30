@@ -1,5 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import DashboardPage from '../pages/private/DashboardPage';
+import DetailContent from '../pages/private/DetailContent';
 import AboutPage from '../pages/public/AboutPage';
 import ContactPage from '../pages/public/ContactPage';
 import ForgotPasswordPage from '../pages/public/ForgotPasswordPage';
@@ -22,6 +23,7 @@ const AppRoutes = () => {
         <Route path="/forgotpassword" element={<ForgotPasswordPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/auth/google/callback" element={<GoogleCallback />} />
+        <Route path="/dashboard/detailcontent" element={<DetailContent />} />
       </Routes>
     </Router>
   );
