@@ -47,7 +47,7 @@ const RegisterPage = () => {
 
       if (response.ok) {
         setSuccessMessage(data.message);
-        navigate('/dashboard'); // Redirect to /dashboard on success
+        navigate('/dashboard/home'); // Redirect to /dashboard on success
       } else {
         setErrorMessage(data.message);
       }
