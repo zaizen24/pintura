@@ -1,7 +1,6 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import DashboardPage from '../pages/private/DashboardPage';
 import DetailContent from '../pages/private/DetailContent';
-import Setting from '../pages/private/SettingPage';
 import AboutPage from '../pages/public/AboutPage';
 import ContactPage from '../pages/public/ContactPage';
 import ForgotPasswordPage from '../pages/public/ForgotPasswordPage';
