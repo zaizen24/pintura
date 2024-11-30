@@ -1,14 +1,15 @@
-const dotenv = require('dotenv'); // Memuat variabel lingkungan dari file .env
+const dotenv = require('dotenv'); // Memuat variabel lingkungan dari file .envs
 const https = require('https');  // Membuat server HTTPS
 const fs = require('fs');        // Mengakses file sistem
 const path = require('path');    // Mengelola path file/direktori
 const { constants } = require('crypto'); // Menggunakan 'constants' untuk SSL/TLS konfigurasi
-const app = require('./app.js'); // Mengimpor aplikasi Express
 const bodyParser = require('body-parser'); // Add body-parser for parsing request bodies
 const { User } = require('./database/models'); // Import User model
+const session = require('express-session'); // Import express-session
+const app = require('./app.js'); // Mengimpor aplikasi Express
 const passport = require('passport'); // Import passport
 const GoogleStrategy = require('passport-google-oauth20').Strategy; // Import Google OAuth strategy
-const session = require('express-session'); // Import express-session
+
 
 // Memuat variabel dari file .env
 dotenv.config();
@@ -30,15 +31,14 @@ const APP_URL = process.env.APP_URL;
 const sslOptions = {
   key: fs.readFileSync(path.resolve(process.env.SSL_KEY_PATH)), // Membaca file private key SSL
   cert: fs.readFileSync(path.resolve(process.env.SSL_CERT_PATH)), // Membaca file sertifikat SSL
-  ca: process.env.SSL_CA_PATH ? fs.readFileSync(path.resolve(process.env.SSL_CA_PATH)) : undefined, // CA opsional
   secureOptions: constants.SSL_OP_NO_TLSv1 | constants.SSL_OP_NO_TLSv1_1, // Menonaktifkan TLSv1 dan TLSv1.1
 };
 
 app.use(bodyParser.json());
 app.use(session({
   secret: process.env.JWT_SECRET,
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
  
 }));
 
