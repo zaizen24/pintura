@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const courses = [
   {
@@ -20,8 +21,17 @@ const courses = [
 ];
 
 const CourseCard = ({ course }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/dashboard/detailcontent', { state: { course } });
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden flex w-full md:w-1/2 mb-4 md:mb-0">
+    <div
+      onClick={handleClick}
+      className="bg-white rounded-lg shadow-md overflow-hidden flex w-full md:w-1/2 mb-4 md:mb-0 cursor-pointer hover:shadow-lg transition-shadow"
+    >
       <img className="w-1/3 object-cover" src={course.imageUrl} alt={course.title} />
       <div className="p-4 flex flex-col justify-between">
         <div>
