@@ -8,6 +8,7 @@ const bodyParser = require('body-parser'); // Add body-parser for parsing reques
 const { User } = require('./database/models'); // Import User model
 const passport = require('passport'); // Import passport
 const GoogleStrategy = require('passport-google-oauth20').Strategy; // Import Google OAuth strategy
+const session = require('express-session'); // Import express-session
 
 // Memuat variabel dari file .env
 dotenv.config();
@@ -33,6 +34,18 @@ const sslOptions = {
   secureOptions: constants.SSL_OP_NO_TLSv1 | constants.SSL_OP_NO_TLSv1_1, // Menonaktifkan TLSv1 dan TLSv1.1
 };
 
+app.use(bodyParser.json());
+app.use(session({
+  secret: process.env.JWT_SECRET,
+  resave: false,
+  saveUninitialized: false,
+ 
+}));
+
+// Passport middleware setelah session
+app.use(passport.initialize());
+app.use(passport.session()); // Inisialisasi sesi passport
+
 // Passport configuration
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
@@ -41,24 +54,45 @@ passport.use(new GoogleStrategy({
 }, async (token, tokenSecret, profile, done) => {
   try {
     console.log('Google profile received:', profile); // Log profil Google
+
+    // Cek apakah pengguna sudah ada berdasarkan googleId
     let user = await User.findOne({ where: { googleId: profile.id } });
-    if (!user) {
-      console.log('User not found. Creating a new user...');
-      user = await User.create({
-        googleId: profile.id,
-        name: profile.displayName,
-        email: profile.emails[0].value,
-      });
-      console.log('New user created:', user);
+
+    if (user) {
+      // Jika pengguna sudah ada berdasarkan googleId, login pengguna
+      console.log('Existing user found with Google ID:', user);
+      return done(null, user);
     } else {
-      console.log('Existing user found:', user);
+      // Jika pengguna belum ada, cek berdasarkan email
+      user = await User.findOne({ where: { email: profile.emails[0].value } });
+
+      if (user) {
+        // Jika pengguna ditemukan berdasarkan email, login pengguna
+        console.log('Existing user found with email:', user);
+        return done(null, user);
+      } else {
+        // Jika tidak ada pengguna, buat pengguna baru
+        console.log('No user found. Creating a new user...');
+        user = await User.create({
+          googleId: profile.id,
+          name: profile.displayName,
+          email: profile.emails[0].value,
+          password: '', // Kosongkan password atau atur sesuai kebutuhan
+          created_at: new Date(),
+          updated_at: new Date(),
+          deleted_at: null,
+        });
+
+        console.log('New user created:', user);
+        return done(null, user); // Redirect ke callback dan login user baru
+      }
     }
-    return done(null, user);
   } catch (error) {
     console.error('Error in Google OAuth strategy:', error);
-    return done(error, null);
+    return done(error, null); // Jika terjadi error, kirim ke done
   }
 }));
+
 
 
 passport.serializeUser((user, done) => {
@@ -77,8 +111,27 @@ passport.deserializeUser(async (id, done) => {
 // Membuat server HTTPS dan menyimpannya dalam variabel
 const server = https.createServer(sslOptions, app);
 
-app.use(bodyParser.json()); // Use body-parser middleware
-app.use(passport.initialize()); // Initialize passport
+// Use body-parser middleware
+
+
+// Configure session and cookie settings
+
+
+// Middleware to handle OpaqueResponseBlocking errors
+app.use((req, res, next) => {
+  if (res.statusCode === 0) {
+    console.error('Blocked by OpaqueResponseBlocking:', req.originalUrl);
+    return res.status(403).json({ message: 'Blocked by OpaqueResponseBlocking' });
+  }
+  next();
+});
+
+// Add headers to allow third-party cookies and storage access
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL);
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 // Route for user registration
 app.post('/api/register', async (req, res) => {
@@ -93,7 +146,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// Route for Google OAuth
+// Route for Google OAuth registration
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback', (req, res, next) => {
@@ -116,7 +169,6 @@ app.get('/auth/google/callback', (req, res, next) => {
     });
   })(req, res, next);
 });
-
 
 // Middleware to handle 404 errors
 app.use((req, res, next) => {
