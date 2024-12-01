@@ -4,7 +4,7 @@ import DetailContent from '../pages/private/DetailContent';
 import AboutPage from '../pages/public/AboutPage';
 import ContactPage from '../pages/public/ContactPage';
 import ForgotPasswordPage from '../pages/public/ForgotPasswordPage';
-import GoogleCallback from '../pages/public/GoogleCallback';
+// import GoogleCallback from '../pages/public/GoogleCallback';
 import HomePage from '../pages/public/HomePage';
 import LoginPage from '../pages/public/LoginPage';
 import PricingPage from '../pages/public/PricingPage';
